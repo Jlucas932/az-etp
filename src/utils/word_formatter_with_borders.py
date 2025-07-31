@@ -537,20 +537,13 @@ class WordFormatterWithBorders:
         page_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
     
     def _save_document_with_timestamp(self, doc: Document) -> str:
-        """Salva documento com timestamp"""
-        # Criar diretório se não existir
-        output_dir = "/home/ubuntu/etp_final_ultra_otimizado/documentos_gerados"
-        os.makedirs(output_dir, exist_ok=True)
-        
-        # Nome do arquivo com timestamp
+        """Salva documento com timestamp em arquivo temporário"""
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         filename = f"ETP_Com_Bordas_{timestamp}.docx"
-        doc_path = os.path.join(output_dir, filename)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".docx", prefix="etp_", dir=None) as tmp:
+            doc.save(tmp.name)
+            return tmp.name
         
-        # Salvar documento
-        doc.save(doc_path)
-        return doc_path
-    
     def create_etp_with_borders(self, etp_content: str, session_data: Dict = None) -> str:
         """Método principal para criar ETP com bordas"""
         return self.create_document_with_borders(etp_content, session_data)

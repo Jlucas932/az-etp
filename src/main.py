@@ -45,8 +45,11 @@ app.register_blueprint(user_bp, url_prefix='/api')
 app.register_blueprint(etp_bp, url_prefix='/api/etp')
 app.register_blueprint(chat_bp, url_prefix='/api/chat')
 
-# Corrigir o caminho absoluto do banco SQLite
-db_path = os.path.join(basedir, 'database', 'app.db')
+# ✅ Corrigir o caminho absoluto do banco SQLite e garantir que a pasta exista
+db_folder = os.path.join(basedir, 'database')
+os.makedirs(db_folder, exist_ok=True)
+
+db_path = os.path.join(db_folder, 'app.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 

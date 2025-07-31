@@ -30,29 +30,38 @@ from src.routes.user import user_bp
 from src.routes.etp import etp_bp
 from src.routes.chat import chat_bp
 
-app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
+# Caminho absoluto da pasta atual
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+# Inicialização do app Flask
+app = Flask(__name__, static_folder=os.path.join(basedir, 'static'))
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'asdf#FGSgvasgf$5$WGT')
 
 # Configurar CORS para permitir requisições do frontend
 CORS(app, origins="*")
 
+# Registrar rotas
 app.register_blueprint(user_bp, url_prefix='/api')
 app.register_blueprint(etp_bp, url_prefix='/api/etp')
 app.register_blueprint(chat_bp, url_prefix='/api/chat')
 
-# uncomment if you need to use database
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(os.path.dirname(__file__), 'database', 'app.db')}"
+# Corrigir o caminho absoluto do banco SQLite
+db_path = os.path.join(basedir, 'database', 'app.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Inicializar banco
 db.init_app(app)
 with app.app_context():
     db.create_all()
 
+# Servir arquivos estáticos
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
     static_folder_path = app.static_folder
     if static_folder_path is None:
-            return "Static folder not configured", 404
+        return "Static folder not configured", 404
 
     if path != "" and os.path.exists(os.path.join(static_folder_path, path)):
         return send_from_directory(static_folder_path, path)
@@ -63,9 +72,9 @@ def serve(path):
         else:
             return "index.html not found", 404
 
+# Endpoint de verificação
 @app.route('/health')
 def health():
-    """Endpoint de verificação de saúde do sistema"""
     return {
         'status': 'healthy',
         'api_configured': bool(OPENAI_API_KEY),

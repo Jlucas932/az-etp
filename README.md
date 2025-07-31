@@ -121,4 +121,3 @@ Para dúvidas ou problemas:
 - **Versão**: 2.0.0
 - **Compatibilidade**: Lei 14.133/21
 - **Tecnologias**: Flask + OpenAI + SQLite
-

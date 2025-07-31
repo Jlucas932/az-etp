@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AZ ETP Fácil - Sistema de Geração de Documentos de Licitação</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon_etp.ico" type="image/x-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span>📄IA Licitação</span>
+                </div>
+                <button class="new-chat-btn" id="newChatBtn">
+                    <i class="fas fa-plus"></i>
+                    <span>Nova Conversa</span>
+                </button>
+            </div>
+
+            <div class="chat-history">
+                <div class="chat-history-header">
+                    <h3>Conversas Recentes</h3>
+                </div>
+                <div class="chat-list" id="chatList">
+                    <!-- Chat history will be populated here -->
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">Usuário</span>
+                    </div>
+                </div>
+
+                <!-- Menu suspenso do usuário -->
+                <div class="user-menu" id="userMenu">
+                    <button class="user-menu-item" id="userSettings">
+                        <i class="fas fa-cog"></i>
+                        <span>Configurações</span>
+                    </button>
+                    <button class="user-menu-item" id="userLogout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Sair</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="main-header">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="header-actions">
+                    <button class="header-btn" title="Configurações">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button class="header-btn" title="Ajuda">
+                        <i class="fas fa-question-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="welcome-message" id="welcomeMessage">
+                        <div class="welcome-icon">
+                            <i class="fas fa-file-contract" style="font-size: 60px; color: #4a90e2;"></i>
+                        </div>
+                        <h2>Bem-vindo ao AZ ETP Fácil!</h2>
+                        <p>Sistema inteligente para geração de documentos de Estudo Técnico Preliminar (ETP) conforme a Lei 14.133/21.</p>
+                        
+                        <div class="etp-options">
+                            <button class="etp-option-btn" id="etpStartBtn">
+                                <i class="fas fa-file-alt"></i>
+                                <div class="option-content">
+                                    <span class="option-title">Iniciar Novo ETP</span>
+                                    <span class="option-desc">Criar um novo Estudo Técnico Preliminar</span>
+                                </div>
+                            </button>
+                            
+                            <button class="etp-option-btn" id="chatModeBtn">
+                                <i class="fas fa-comments"></i>
+                                <div class="option-content">
+                                    <span class="option-title">Chat sobre Compras Públicas</span>
+                                    <span class="option-desc">Tire dúvidas sobre licitações e Lei 14.133/21</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <div class="input-actions">
+                            <button class="attachment-btn" id="attachmentBtn" title="Anexar arquivo">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <input type="file" id="fileInput" accept=".pdf,.doc,.docx" style="display: none;">
+                        </div>
+
+                        <div class="input-field">
+                            <textarea 
+                                id="messageInput" 
+                                placeholder="Digite sua mensagem aqui..." 
+                                rows="1"
+                                maxlength="4000"
+                            ></textarea>
+                            <div class="input-footer">
+                                <span class="char-count" id="charCount">0/4000</span>
+                                <div class="input-controls">
+                                    <button class="send-btn" id="sendBtn" title="Enviar mensagem">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="attached-files" id="attachedFiles" style="display: none;">
+                        <!-- Arquivos anexados aparecerão aqui -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ETP Flow Modal -->
+    <div class="modal-overlay" id="etpModalOverlay" style="display: none;">
+        <div class="modal etp-modal" id="etpModal">
+            <div class="modal-header">
+                <h3 id="etpModalTitle">Geração de ETP</h3>
+                <button class="modal-close" id="etpModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content" id="etpModalContent">
+                <!-- ETP flow content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="modalOverlay" style="display: none;">
+        <div class="modal" id="settingsModal">
+            <div class="modal-header">
+                <h3>Configurações</h3>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <div class="setting-group">
+                    <label>Tema</label>
+                    <select id="themeSelect">
+                        <option value="light">Claro</option>
+                        <option value="dark">Escuro</option>
+                        <option value="auto">Automático</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <button class="settings-btn" id="buttonconhecimento">
+                        <i class="fas fa-brain"></i>
+                        <span>Base de Conhecimento</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Base de Conhecimento -->
+    <div class="modal-overlay" id="knowledgeModalOverlay" style="display: none;">
+        <div class="modal knowledge-modal" id="knowledgeModal">
+            <div class="modal-header">
+                <h3>Base de Conhecimento</h3>
+                <button class="modal-close" id="knowledgeModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <div class="knowledge-upload-area">
+                    <div class="upload-zone" id="uploadZone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h4>Carregar Documentos PDF</h4>
+                        <p>Arraste e solte arquivos PDF aqui ou clique para selecionar</p>
+                        <input type="file" id="knowledgeFileInput" multiple accept=".pdf" style="display: none;">
+                        <button class="upload-btn" id="selectFilesBtn">Selecionar Arquivos</button>
+                    </div>
+                </div>
+
+                <div class="uploaded-files" id="uploadedFiles">
+                    <h4>Documentos Carregados</h4>
+                    <div class="files-list" id="filesList">
+                        <!-- Arquivos carregados aparecerão aqui -->
+                    </div>
+                </div>
+
+                <div class="knowledge-actions">
+                    <button class="btn-secondary" id="clearKnowledgeBtn">Limpar Tudo</button>
+                    <button class="btn-primary" id="saveKnowledgeBtn">Salvar Base</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p id="loadingText">Processando...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
